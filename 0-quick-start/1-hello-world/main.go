@@ -25,8 +25,8 @@ func main() {
 }
 
 func run(window *app.Window) error {
-	// th contains constants for theming.
-	th := material.NewTheme()
+	// theme contains constants for theming.
+	theme := material.NewTheme()
 	// ops will be used to encode different operations
 	var ops op.Ops
 	for {
