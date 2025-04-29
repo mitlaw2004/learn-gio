@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: Unlicense OR MIT
-
 package main
 
 import (
@@ -8,9 +7,6 @@ import (
 	"os"
 
 	"gioui.org/app"             // app contains Window handling.
-	"gioui.org/font/gofont"     // gofont is used for loading the default font.
-	"gioui.org/io/system"       // system is used for system events (e.g. closing the window).
-	"gioui.org/layout"          // layout is used for layouting widgets.
 	"gioui.org/op"              // op is used for recording different operations.
 	"gioui.org/text"            // text contains constants for text layouting.
 	"gioui.org/widget/material" // material contains material design widgets.
@@ -18,47 +14,47 @@ import (
 
 func main() {
 	go func() {
-		w := app.NewWindow()
-		if err := loop(w); err != nil {
-			log.Println(err)
-			os.Exit(1)
+		window := new(app.Window)
+		err := run(window)
+		if err != nil {
+			log.Fatal(err)
 		}
 		os.Exit(0)
 	}()
 	app.Main()
 }
 
-func loop(w *app.Window) error {
+func run(window *app.Window) error {
 	// th contains constants for theming.
-	th := material.NewTheme(gofont.Collection())
-
-	// ops will be used to encode different operations.
+	th := material.NewTheme()
+	// ops will be used to encode different operations
 	var ops op.Ops
-
-	// listen for events happening on the window.
-	for e := range w.Events() {
+	for {
 		// detect the type of the event.
-		switch e := e.(type) {
+		switch e := window.Event().(type) {
 		// this is sent when the application should re-render.
-		case system.FrameEvent:
-			// gtx is used to pass around rendering and event information.
-			gtx := layout.NewContext(&ops, e)
-
-			// handle all UI logic
-			l := material.H1(th, "Hello, Gio")
-			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
-			l.Color = maroon
-			l.Alignment = text.Middle
-			l.Layout(gtx)
-
-			// render and handle the operations from the UI.
-			e.Frame(gtx.Ops)
-
-		// this is sent when the application is closed.
-		case system.DestroyEvent:
+		case app.DestroyEvent:
 			return e.Err
+			// this is sent when the application should re-render.
+		case app.FrameEvent:
+			// This graphics context is used for managing the rendering and event information.
+			gtx := app.NewContext(&ops, e)
+
+			// Define an large label with an appropriate text:
+			title := material.H1(th, "Hello, Gio")
+
+			// Change the color of the label.
+			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
+			title.Color = maroon
+
+			// Change the position of the label.
+			title.Alignment = text.Middle
+
+			// Draw the label to the graphics context.
+			title.Layout(gtx)
+
+			// Pass the drawing operations to the GPU.
+			e.Frame(gtx.Ops)
 		}
 	}
-
-	return nil
 }
