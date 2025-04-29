@@ -25,8 +25,8 @@ func main() {
 }
 
 func run(window *app.Window) error {
-	// theme contains constants for theming.
-	theme := material.NewTheme()
+	// th contains constants for theming.
+	th := material.NewTheme()
 	// ops will be used to encode different operations
 	var ops op.Ops
 	for {
@@ -41,7 +41,7 @@ func run(window *app.Window) error {
 			gtx := app.NewContext(&ops, e)
 
 			// Define an large label with an appropriate text:
-			title := material.H1(theme, "Hello, Gio")
+			title := material.H1(th, "Hello, Gio")
 
 			// Change the color of the label.
 			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
